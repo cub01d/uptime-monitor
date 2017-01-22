@@ -9,7 +9,11 @@
   "author": "Kenneth Chan",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.16.0",
+    "dotenv": "^4.0.0",
     "express": "^4.14.0",
-    "sqlite3": "^3.1.5"
+    "morgan": "^1.7.0",
+    "sqlite3": "^3.1.5",
+    "twilio": "^2.11.1"
   }
 }
