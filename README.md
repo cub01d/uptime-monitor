@@ -8,6 +8,6 @@ Run `node app` to start the node server.
 
 ## Planned ideas
 * meaningful content in HTTP-POST requests. maybe look into bodyparser?
-** authentication in terms of pubkey/privkey requests
-** idea: generate random(?) message. encrypt message with corona's pubkey. if decrypted message is the same as random message sent, then user is verified.
+* authentication in terms of pubkey/privkey requests
+* idea: generate random(?) message. encrypt message with corona's pubkey. if decrypted message is the same as random message sent, then user is verified.
 * client-side program that automates the HTTP-POST requests.
