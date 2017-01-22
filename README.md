@@ -7,7 +7,7 @@ Opens a listening port (default: 3000) for HTTP-POST requests. Stores time of po
 Run `node app` to start the node server.
 
 ## Planned ideas
-* create a "notifyTimer", and upon every post from the server do a "clearTimeout" then use "setTimeout" to trigger a callback to occur after the polltime+1
-* integrate with twilio for text push notifications
-* meaningful content in HTTP-POST requests. install bodyparser
-* authorization token? ensure it's corona making the call and not anyone else
+* meaningful content in HTTP-POST requests. maybe look into bodyparser?
+** authentication in terms of pubkey/privkey requests
+** idea: generate random(?) message. encrypt message with corona's pubkey. if decrypted message is the same as random message sent, then user is verified.
+* client-side program that automates the HTTP-POST requests.

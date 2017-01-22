@@ -6,7 +6,7 @@ var sqlite3 = require('sqlite3').verbose();
 var twilioNotifications = require('./twilioNotifications');
 var logger = require('morgan');
 var config = require('./config');
-
+// var crypt = require('./crypt')
 //==============================================================================
 
 var status = 'OFFLINE';
@@ -36,7 +36,7 @@ function checkHost() {
 				} else {
 					status = 'ONLINE';
 				}
-				console.log('now: ' + now + '\ntime: '+time+'\nnow-time: ', now-time);
+				console.log('now: ' + now + '\ntime: '+time+'\ndiff: ', now-time);
 			}
 			catch (err) {
 				console.log('error in retrieving timestamp from db');
@@ -45,41 +45,40 @@ function checkHost() {
 	});
 	latest = new Date(time).toString();
 }
+// check every polltime minutes
 var polltime = 2;
 polltime *= 60000;
 checkTimer = setInterval(checkHost, polltime);
 
 // http post: save into database
 app.post('/', function(req, res) {
-	var timestamp = Date.now();
-	time = timestamp;
-	var date = new Date(timestamp).toJSON().substring(0,10);
-	db.serialize(function() {
-		db.run('INSERT INTO corona VALUES (?, ?)', timestamp, date); 
-	});
-	res.sendStatus(204);
+	console.log('req.body: \n' + req.body);
+	// idea: generate random(?) message. encrypt message with corona's pubkey. 
+	// if decrypted message is the same as random message sent, then user is 
+	// in fact verified. 
 
-	console.log('notifyTimer reset');
-	clearTimeout(notifyTimer);
-	notifyTimer = setTimeout(function() {
-		console.log('notifyTimer set');
-		// send text message???
-		var message = "corona is offline. last online: "+ latest;
-		twilioNotifications.notify(message, req, res);
+	// if(crypt.validMessage(req.body)) {
+		var timestamp = Date.now();
+		time = timestamp;
+		var date = new Date(timestamp).toJSON().substring(0,10);
+		db.serialize(function() {
+			db.run('INSERT INTO corona VALUES (?, ?)', timestamp, date); 
+		});
+		res.sendStatus(204);
 
-	}, polltime);
-
+		console.log('notifyTimer reset');
+		clearTimeout(notifyTimer);
+		notifyTimer = setTimeout(function() {
+			console.log('notifyTimer set');
+			// send text message
+			var message = "corona is offline. last online: "+ latest;
+			twilioNotifications.notify(message, req, res);
+		}, polltime);
+	// }
 });
 
 
 // displays status of host
-// http get: if >5 minutes since last post, plaintext:
-// corona is OFFLINE
-// else
-// corona is ONLINE
-//
-// TODO: followed by neat color coded table
-
 app.get('/', function(req, res) {
 	checkHost();
 	res.send('corona is ' + status + '<br>last online: ' + latest);
@@ -95,4 +94,5 @@ app.listen(3000, function() {
 
 //log to console
 app.use(logger('dev'));
+// app.use('body-parser');
 app.use(twilioNotifications.notify);
